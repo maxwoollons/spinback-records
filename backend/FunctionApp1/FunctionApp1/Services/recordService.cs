@@ -1,23 +1,21 @@
 ﻿using SpinbackApi.Data;
 using SpinbackApi.Models;
-using SpinbackApi.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 
-namespace SpinbackApi.Services
+public static class RecordService
 {
-    public static class RecordService
+    public static List<Record> GetAll(SpinbackDbContext db)
     {
-        public static Record? GetById(int id)
-        {
-            return RecordStore.Records.FirstOrDefault(r => r.Id == id);
-        }
+        return db.Records.ToList();
+    }
 
-        public static List<Record> GetAll()
-        {
-            return RecordStore.Records;
-        }
+    public static Record? GetById(SpinbackDbContext db, int id)
+    {
+        return db.Records.FirstOrDefault(r => r.Id == id);
+    }
+
+    public static void AddRecord(SpinbackDbContext db, Record record)
+    {
+        db.Records.Add(record);
+        db.SaveChanges();
     }
 }

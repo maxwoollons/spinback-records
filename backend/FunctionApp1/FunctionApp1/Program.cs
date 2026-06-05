@@ -29,7 +29,7 @@ using (var scope = app.Services.CreateScope())
         db.Records.AddRange(
             new Record { Title = "Rumours", Artist = "Fleetwood Mac", Available = true },
             new Record { Title = "Kind of Blue", Artist = "Miles Davis", Available = true },
-            new Record { Title = "Back in Black", Artist = "AC/DC", Available = false },
+            new Record { Title = "Back in Black", Artist = "AC/DC", Available = true },
             new Record { Title = "Thriller", Artist = "Michael Jackson", Available = true },
             new Record { Title = "The Dark Side of the Moon", Artist = "Pink Floyd", Available = true }
         );

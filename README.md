@@ -6,7 +6,7 @@ A vinyl hire app I built to practice full stack development. You can browse reco
 
 ```
 spinback-records/
-├── backend/FunctionApp1/FunctionApp1/   .NET 10 Azure Functions API
+├── backend/SpinbackApi/SpinbackApi/   .NET 10 Azure Functions API
 └── frontend/                            Vite + React + TypeScript UI
 ```
 
@@ -19,7 +19,7 @@ Built with .NET 10 Azure Functions (isolated worker), Entity Framework Core, and
 - Azure Functions Core Tools v4
 
 ```bash
-cd backend/FunctionApp1/FunctionApp1
+cd backend/SpinbackApi/SpinbackApi
 func start
 ```
 

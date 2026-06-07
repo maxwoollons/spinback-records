@@ -1,0 +1,11 @@
+"where is the sqlite saved?"
+
+"UseCors not defiend"
+
+My personal favorite
+"Why is this having a cry?"
+
+"in dot net whats the method of passing in data, e.g ids"
+
+Getting it to quickly update the addRrecord URL
+"the add record endpoint is /addRecord"

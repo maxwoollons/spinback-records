@@ -144,3 +144,12 @@ vite.config.ts.timestamp-*
 
 
 .vs/
+
+# .NET
+bin/
+obj/
+*.db
+*.db-shm
+*.db-wal
+*.user
+local.settings.json

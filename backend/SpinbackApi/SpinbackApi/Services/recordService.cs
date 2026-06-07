@@ -122,20 +122,23 @@ public static class RecordService
         return hire;
     }
 
-    public static bool ReturnRecord(SpinbackDbContext db, int recordId)
+    public static ReturnResult ReturnRecord(SpinbackDbContext db, int recordId)
     {
+        var record = db.Records.FirstOrDefault(r => r.Id == recordId);
+        if (record == null) return ReturnResult.NotFound;
+
         var hire = db.Hires
             .Include(h => h.Record)
             .Where(h => h.RecordId == recordId && h.ReturnedAt == null)
             .FirstOrDefault();
 
-        if (hire == null) return false;
+        if (hire == null) return ReturnResult.NotHiredOut;
 
         hire.ReturnedAt = DateTime.UtcNow;
         hire.Record.Available = true;
 
         db.SaveChanges();
-        return true;
+        return ReturnResult.Success;
     }
 
     public static DeleteRecordResponse DeleteRecord(SpinbackDbContext db, int recordId)

@@ -108,13 +108,17 @@ public class returnRecord
 
     [Function("returnRecord")]
     public IActionResult Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "records/{id}/return")] HttpRequest req, int id)
+    [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "records/{id}/return")] HttpRequest req, int id)
     {
-        var success = RecordService.ReturnRecord(_db, id);
+        var result = RecordService.ReturnRecord(_db, id);
 
-        if (!success) return new NotFoundObjectResult("No active hire found for this record.");
-
-        return new OkObjectResult("Record returned successfully.");
+        return result switch
+        {
+            ReturnResult.Success => new OkObjectResult("Record returned successfully."),
+            ReturnResult.NotFound => new NotFoundObjectResult("Record not found."),
+            ReturnResult.NotHiredOut => new BadRequestObjectResult("This record is not currently hired out."),
+            _ => new StatusCodeResult(500)
+        };
     }
 }
 

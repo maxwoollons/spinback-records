@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="SpinbackApi.Tests/SpinbackApi.Tests.csproj" Id="e12cdf69-6c81-433b-98fe-a97c8d77db2d" />
   <Project Path="SpinbackApi/SpinbackApi.csproj" />
 </Solution>

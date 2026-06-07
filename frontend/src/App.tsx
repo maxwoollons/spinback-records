@@ -46,6 +46,20 @@ export default function App() {
     }
   }
 
+  const openHireDialog = async (record: RecordItem) => {
+    try {
+      const { data } = await api.get<RecordItem>(`/getRecordById/${record.id}`)
+      if (!data.available) {
+        setSnack({ msg: 'This record has just been hired out.', ok: false })
+        await loadRecords()
+        return
+      }
+      setHiring(data)
+    } catch {
+      setSnack({ msg: 'Could not load record details.', ok: false })
+    }
+  }
+
   const hireRecord = async (name: string) => {
     if (!hiring) return
     try {
@@ -177,7 +191,7 @@ export default function App() {
                   <AlbumCard
                     key={record.id}
                     record={record}
-                    onHire={setHiring}
+                    onHire={openHireDialog}
                     onReturn={returnRecord}
                     onDelete={deleteRecord}
                   />

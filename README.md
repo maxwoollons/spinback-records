@@ -2,6 +2,41 @@
 
 A vinyl hire app I built to practice full stack development. You can browse records, hire them out, and return them. Album art loads automatically using the MusicBrainz and Cover Art Archive APIs.
 
+## How to Run
+
+### Frontend
+The frontend was developed using Vite.
+
+Navigate to the root folder and run:
+
+```bash
+npm i
+npm run dev
+```
+
+> Tested on `Node v22.18.0` - other versions should work but are untested.
+
+### Backend
+Open the solution in Visual Studio and run the backend using .NET 10.
+
+Create a `local.settings.json` file in the solution folder:
+
+```json
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
+  },
+  "Host": {
+    "LocalHttpPort": 7196,
+    "CORS": "*",
+    "CORSCredentials": false
+  }
+}
+```
+
+
 ## Project structure
 
 ```
@@ -10,20 +45,6 @@ spinback-records/
 └── frontend/                            Vite + React + TypeScript UI
 ```
 
-## Backend
-
-Built with .NET 10 Azure Functions (isolated worker), Entity Framework Core, and SQLite. No database setup needed, it creates and seeds itself on first run.
-
-**You'll need:**
-- .NET 10 SDK
-- Azure Functions Core Tools v4
-
-```bash
-cd backend/SpinbackApi/SpinbackApi
-func start
-```
-
-Runs on `http://localhost:7196/api`.
 
 ### API endpoints
 
@@ -46,22 +67,6 @@ Runs on `http://localhost:7196/api`.
 { "FirstName": "Jane" }
 ```
 
-### Cover art
-
-When a record doesn't have an `MbId` yet, the API looks it up on MusicBrainz by artist and title, saves the release group ID, then the frontend uses that to pull the cover image from the Cover Art Archive. There's a 1.1s delay between lookups to stay within the MusicBrainz rate limit.
-
-## Frontend
-
-React + TypeScript with Vite. Uses MUI for the UI (dark theme) and Axios for API calls.
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Runs on `http://localhost:5173`, expects the backend on port 7196.
-
 ### What you can do
 
 - Browse the collection as a grid with album art
@@ -71,9 +76,3 @@ Runs on `http://localhost:5173`, expects the backend on port 7196.
 - Add new records
 - Delete records (only works if they're not hired out)
 - Hover over Michael Jackson
-
-### Build
-
-```bash
-npm run build
-```

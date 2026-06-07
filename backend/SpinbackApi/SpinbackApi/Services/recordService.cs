@@ -8,7 +8,7 @@ public static class RecordService
 {
     public static async Task<List<Record>> GetAll(SpinbackDbContext db, string? artist = null, bool? available = null)
     {
-        var records = db.Records.ToList();
+        List<Record> records = db.Records.ToList();
 
         if (artist != null)
             records = records.Where(r => r.Artist?.ToLower().Contains(artist.ToLower()) == true).ToList();
@@ -16,7 +16,7 @@ public static class RecordService
         if (available != null)
             records = records.Where(r => r.Available == available).ToList();
 
-        var activeHires = db.Hires
+        List<Hire> activeHires = db.Hires
             .Where(h => h.ReturnedAt == null)
             .ToList();
 
@@ -25,26 +25,26 @@ public static class RecordService
 
         foreach (var record in records)
         {
-            var hire = activeHires.FirstOrDefault(h => h.RecordId == record.Id);
+            Hire? hire = activeHires.FirstOrDefault(h => h.RecordId == record.Id);
             record.HiredBy = hire?.FirstName ?? "Unknown";
             record.HiredAt = hire?.HiredAt ?? null;
 
             if (record.MbId != null) continue;
 
-            var query = $"releasegroup:{record.Title} AND artist:{record.Artist}";
-            var encoded = Uri.EscapeDataString(query);
-            var url = $"https://musicbrainz.org/ws/2/release-group/?query={encoded}&fmt=json&limit=1";
+            string query = $"releasegroup:{record.Title} AND artist:{record.Artist}";
+            string encoded = Uri.EscapeDataString(query);
+            string url = $"https://musicbrainz.org/ws/2/release-group/?query={encoded}&fmt=json&limit=1";
 
-            var response = await client.GetAsync(url);
+            HttpResponseMessage response = await client.GetAsync(url);
             if (!response.IsSuccessStatusCode) continue;
 
-            var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<MusicBrainzReleaseGroupResponse>(json, new JsonSerializerOptions
+            string json = await response.Content.ReadAsStringAsync();
+            MusicBrainzReleaseGroupResponse? result = JsonSerializer.Deserialize<MusicBrainzReleaseGroupResponse>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
 
-            var match = result?.ReleaseGroups?.FirstOrDefault();
+            MusicBrainzReleaseGroup? match = result?.ReleaseGroups?.FirstOrDefault();
             if (match == null) continue;
 
             record.MbId = match.Id;
@@ -59,33 +59,33 @@ public static class RecordService
 
     public static async Task<Record?> GetById(SpinbackDbContext db, int id)
     {
-        var record = db.Records.FirstOrDefault(r => r.Id == id);
+        Record? record = db.Records.FirstOrDefault(r => r.Id == id);
 
         if (record == null) return null;
 
-        var hire = db.Hires.FirstOrDefault(h => h.RecordId == id && h.ReturnedAt == null);
+        Hire? hire = db.Hires.FirstOrDefault(h => h.RecordId == id && h.ReturnedAt == null);
         record.HiredBy = hire?.FirstName ?? "Unknown";
         record.HiredAt = hire?.HiredAt ?? null;
 
         if (record.MbId == null)
         {
-            using var client = new HttpClient();
+            using HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "SpinbackApi/1.0 (emailtestingpineapple@gmail.com)");
 
-            var query = $"releasegroup:{record.Title} AND artist:{record.Artist}";
-            var encoded = Uri.EscapeDataString(query);
-            var url = $"https://musicbrainz.org/ws/2/release-group/?query={encoded}&fmt=json&limit=1";
+            string query = $"releasegroup:{record.Title} AND artist:{record.Artist}";
+            string encoded = Uri.EscapeDataString(query);
+            string url = $"https://musicbrainz.org/ws/2/release-group/?query={encoded}&fmt=json&limit=1";
 
-            var response = await client.GetAsync(url);
+            HttpResponseMessage response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<MusicBrainzReleaseGroupResponse>(json, new JsonSerializerOptions
+                string json = await response.Content.ReadAsStringAsync();
+                MusicBrainzReleaseGroupResponse? result = JsonSerializer.Deserialize<MusicBrainzReleaseGroupResponse>(json, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
 
-                var match = result?.ReleaseGroups?.FirstOrDefault();
+                MusicBrainzReleaseGroup? match = result?.ReleaseGroups?.FirstOrDefault();
                 if (match != null)
                 {
                     record.MbId = match.Id;
@@ -104,13 +104,13 @@ public static class RecordService
 
     public static Hire? HireRecord(SpinbackDbContext db, int recordId, string firstName)
     {
-        var record = db.Records.FirstOrDefault(r => r.Id == recordId);
+        Record? record = db.Records.FirstOrDefault(r => r.Id == recordId);
 
         if (record == null || !record.Available) return null;
 
         record.Available = false;
 
-        var hire = new Hire
+        Hire hire = new Hire
         {
             RecordId = recordId,
             FirstName = firstName,
@@ -124,10 +124,10 @@ public static class RecordService
 
     public static ReturnResult ReturnRecord(SpinbackDbContext db, int recordId)
     {
-        var record = db.Records.FirstOrDefault(r => r.Id == recordId);
+        Record? record = db.Records.FirstOrDefault(r => r.Id == recordId);
         if (record == null) return ReturnResult.NotFound;
 
-        var hire = db.Hires
+        Hire? hire = db.Hires
             .Include(h => h.Record)
             .Where(h => h.RecordId == recordId && h.ReturnedAt == null)
             .FirstOrDefault();
@@ -143,9 +143,9 @@ public static class RecordService
 
     public static DeleteRecordResponse DeleteRecord(SpinbackDbContext db, int recordId)
     {
-        var record = db.Records.FirstOrDefault(r => r.Id == recordId);
+        Record? record = db.Records.FirstOrDefault(r => r.Id == recordId);
         if (record == null) return new DeleteRecordResponse { Success = false, Message = "Record not found" };
-        var activeHire = db.Hires.FirstOrDefault(h => h.RecordId == recordId && h.ReturnedAt == null);
+        Hire? activeHire = db.Hires.FirstOrDefault(h => h.RecordId == recordId && h.ReturnedAt == null);
         if (activeHire != null) return new DeleteRecordResponse { Success = false, Message = "Cannot delete a record that is currently hired out" };
         db.Records.Remove(record);
         db.SaveChanges();

@@ -14,8 +14,6 @@ namespace SpinbackApi.Models
         public string? MbId { get; set; }
 
         [NotMapped]
-        public int? Duration { get; set; }
-        [NotMapped]
         public string? HiredBy { get; set; }
         [NotMapped]
         public DateTime? HiredAt { get; set; }

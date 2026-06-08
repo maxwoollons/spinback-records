@@ -1,5 +1,4 @@
 ﻿namespace SpinbackApi.Tests.Services;
-
 using Microsoft.EntityFrameworkCore;
 using SpinbackApi.Data;
 using SpinbackApi.Models;
@@ -15,8 +14,8 @@ public class RecordServiceTests
         var db = new SpinbackDbContext(options);
 
         db.Records.AddRange(
-            new SpinbackApi.Models.Record { Id = 1, Title = "Rumours", Artist = "Fleetwood Mac", Available = true },
-            new SpinbackApi.Models.Record { Id = 2, Title = "Thriller", Artist = "Michael Jackson", Available = false }
+            new Record { Id = 1, Title = "Rumours", Artist = "Fleetwood Mac", Available = true },
+            new Record { Id = 2, Title = "Thriller", Artist = "Michael Jackson", Available = false }
         );
         db.SaveChanges();
 
@@ -27,7 +26,7 @@ public class RecordServiceTests
     public async Task GetById_ReturnsRecord_WhenExists()
     {
         var db = GetInMemoryDb();
-        var record = await RecordService.GetById(db, 1);
+        Record? record = await RecordService.GetById(db, 1);
 
         Assert.NotNull(record);
         Assert.Equal("Rumours", record.Title);
@@ -37,7 +36,7 @@ public class RecordServiceTests
     public async Task GetById_ReturnsNull_WhenNotFound()
     {
         var db = GetInMemoryDb();
-        var record = await RecordService.GetById(db, 99);
+        Record? record = await RecordService.GetById(db, 99);
 
         Assert.Null(record);
     }
@@ -46,8 +45,8 @@ public class RecordServiceTests
     public void ReturnRecord_ReturnsNotHiredOut_WhenNotHired()
     {
         var db = GetInMemoryDb();
-        var result = RecordService.ReturnRecord(db, 1);
+        ReturnRecordResponse result = RecordService.ReturnRecord(db, 1);
 
-        Assert.True(result == ReturnResult.NotHiredOut);
+        Assert.True(result == ReturnRecordResponse.NotHiredOut);
     }
 }

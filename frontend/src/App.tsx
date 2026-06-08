@@ -191,7 +191,7 @@ export default function App() {
                   <AlbumCard
                     key={record.id}
                     record={record}
-                    onHire={openHireDialog}
+                    onHire={setHiring}
                     onReturn={returnRecord}
                     onDelete={deleteRecord}
                   />

@@ -13,7 +13,6 @@ namespace SpinbackApi.Models
             public string FirstName { get; set; }
             public DateTime HiredAt { get; set; }
             public DateTime? ReturnedAt { get; set; }
-
             public Record Record { get; set; }
         }
     }

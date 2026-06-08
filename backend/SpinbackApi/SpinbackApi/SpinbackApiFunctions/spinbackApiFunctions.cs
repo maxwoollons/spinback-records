@@ -116,13 +116,13 @@ public class returnRecord
     public IActionResult Run(
     [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "records/{id}/return")] HttpRequest req, int id)
     {
-        ReturnResult result = RecordService.ReturnRecord(_db, id);
+        ReturnRecordResponse result = RecordService.ReturnRecord(_db, id);
 
         return result switch
         {
-            ReturnResult.Success => new OkObjectResult("Record returned successfully."),
-            ReturnResult.NotFound => new NotFoundObjectResult("Record not found."),
-            ReturnResult.NotHiredOut => new BadRequestObjectResult("This record is not currently hired out."),
+            ReturnRecordResponse.Success => new OkObjectResult("Record returned successfully."),
+            ReturnRecordResponse.NotFound => new NotFoundObjectResult("Record not found."),
+            ReturnRecordResponse.NotHiredOut => new BadRequestObjectResult("This record is not currently hired out."),
             _ => new StatusCodeResult(500)
         };
     }

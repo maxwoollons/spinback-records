@@ -1,6 +1,6 @@
 ﻿namespace SpinbackApi.Models
 {
-    public enum ReturnResult
+    public enum ReturnRecordResponse
     {
         Success,
         NotFound,

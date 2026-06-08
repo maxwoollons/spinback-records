@@ -50,7 +50,7 @@ export default function HireDialog({ record, onClose, onConfirm }: Props) {
               image={coverArtUrl(record.mbId)}
               alt={record.title}
               onError={() => setImgError(true)}
-              sx={{ width: '100%', maxHeight: 220, objectFit: 'cover' }}
+              sx={{ width: '100%', maxHeight: 500, objectFit: 'cover' }}
             />
           )}
           <DialogTitle sx={{ pb: 0.5 }}>

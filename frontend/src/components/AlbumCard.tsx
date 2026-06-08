@@ -3,8 +3,6 @@ import { Box, Button, Card, CardContent, CardMedia, Chip, Skeleton, Typography }
 import { coverArtUrl } from '../api'
 import type { RecordItem } from '../types'
 
-const heeHee = new Audio('/heehee.mp3')
-
 function VinylFallback() {
   return (
     <Box sx={{ width: '100%', height: '100%', bgcolor: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -45,20 +43,8 @@ export default function AlbumCard({ record, onHire, onReturn, onDelete }: Props)
   const [imgError, setImgError] = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
 
-  const isMJ =
-    record.artist.toLowerCase().includes('michael jackson') ||
-    record.title.toLowerCase().includes('michael jackson')
-
-  const handleMouseEnter = () => {
-    if (isMJ) {
-      heeHee.currentTime = 0
-      heeHee.play()
-    }
-  }
-
   return (
     <Card
-      onMouseEnter={handleMouseEnter}
       onClick={() => record.available && onHire(record)}
       sx={{
         cursor: record.available ? 'pointer' : 'default',

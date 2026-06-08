@@ -20,8 +20,8 @@ import api from './api'
 import theme from './theme'
 import type { RecordItem } from './types'
 import AlbumCard from './components/AlbumCard'
-import HireDialog from './components/HireDialog'
-import AddVinylDialog from './components/AddVinylDialog'
+import HireDialog from './components/HireModal'
+import AddVinylDialog from './components/AddVinylModal'
 
 export default function App() {
   const [records, setRecords] = useState<RecordItem[]>([])

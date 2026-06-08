@@ -77,6 +77,31 @@ spinback-records/
 - Delete records (only works if they're not hired out)
 - Hover over Michael Jackson
 
+### What and Why
+
+#### What: 
+
+For this project I went with the cleanest more organized approach.
+
+Implementing Unit Tests along with the backend. The UI is modern clean and its only purpose is really to demo the backend. 
+
+Regardless looks nice enough. 
+
+#### Why:
+
+From past experience with backend work clean code is way more favorable over complex unreadable shortcuts. 
+Clean code and structure across the domain keeps all devs on the same page.
+
+
+Added unit tests as every piece of backend code should contain unit tests. You must test your own work works espectially after changes.
+
+UI is self explanatory. I could make it more advanced but not really necessary.
+
+### If i had more time
+- Swagger UI for the API.
+- Authentication
+- MSSQL DB instead of MYSQLITE
+
 ### Total Time
 - 5 Hours on the basic flow.
 

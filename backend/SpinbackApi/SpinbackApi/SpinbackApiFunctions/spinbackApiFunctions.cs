@@ -21,12 +21,22 @@ public class getRecords
     [Function("getRecords")]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
     {
-        string? artist = req.Query.ContainsKey("artist") ? req.Query["artist"].ToString() : null;
-        string? availableStr = req.Query.ContainsKey("available") ? req.Query["available"].ToString() : null;
-        bool? available = availableStr != null ? availableStr.ToLower() == "true" : null;
+        try
+        {
+            string? artist = req.Query.ContainsKey("artist") ? req.Query["artist"].ToString() : null;
+            string? availableStr = req.Query.ContainsKey("available") ? req.Query["available"].ToString() : null;
+            bool? available = availableStr != null ? availableStr.ToLower() == "true" : null;
 
-        List<Record> records = await RecordService.GetAll(_db, artist, available);
-        return new OkObjectResult(records);
+            List<Record> records = await RecordService.GetAll(_db, artist, available);
+            return new OkObjectResult(records);
+        }
+        catch (Exception ex)
+        {
+            return new ObjectResult("An error occurred: " + ex.Message)
+            {
+                StatusCode = 500
+            };
+        }
     }
 }
 
@@ -44,11 +54,21 @@ public class getRecordById
     public async Task<IActionResult> Run(
      [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "getRecordById/{id}")] HttpRequest req, int id)
     {
-        Record? record = await RecordService.GetById(_db, id);
+        try
+        {
+            Record? record = await RecordService.GetById(_db, id);
 
-        if (record == null) return new NotFoundResult();
+            if (record == null) return new NotFoundResult();
 
-        return new OkObjectResult(record);
+            return new OkObjectResult(record);
+        }
+        catch (Exception ex)
+        {
+            return new ObjectResult("An error occurred: " + ex.Message)
+            {
+                StatusCode = 500
+            };
+        }
     }
 }
 
@@ -65,13 +85,23 @@ public class addRecord
     [Function("addRecord")]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "addRecord")] HttpRequest req)
     {
-        string body = await new StreamReader(req.Body).ReadToEndAsync();
-        Record? record = JsonSerializer.Deserialize<Record>(body);
+        try
+        {
+            string body = await new StreamReader(req.Body).ReadToEndAsync();
+            Record? record = JsonSerializer.Deserialize<Record>(body);
 
-        if (record == null) return new BadRequestResult();
+            if (record == null) return new BadRequestResult();
 
-        RecordService.AddRecord(_db, record);
-        return new OkObjectResult(record);
+            RecordService.AddRecord(_db, record);
+            return new OkObjectResult(record);
+        }
+        catch (Exception ex)
+        {
+            return new ObjectResult("An error occurred: " + ex.Message)
+            {
+                StatusCode = 500
+            };
+        }
     }
 }
 
@@ -89,16 +119,26 @@ public class hireRecord
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "records/{id}/hire")] HttpRequest req, int id)
     {
-        string body = await new StreamReader(req.Body).ReadToEndAsync();
-        HireRequest? payload = JsonSerializer.Deserialize<HireRequest>(body);
+        try
+        {
+            string body = await new StreamReader(req.Body).ReadToEndAsync();
+            HireRequest? payload = JsonSerializer.Deserialize<HireRequest>(body);
 
-        if (payload == null) return new BadRequestResult();
+            if (payload == null) return new BadRequestResult();
 
-        Hire? hire = RecordService.HireRecord(_db, id, payload.FirstName);
+            Hire? hire = RecordService.HireRecord(_db, id, payload.FirstName);
 
-        if (hire == null) return new BadRequestObjectResult("Record not found or already hired out.");
+            if (hire == null) return new BadRequestObjectResult("Record not found or already hired out.");
 
-        return new OkObjectResult(hire);
+            return new OkObjectResult(hire);
+        }
+        catch (Exception ex)
+        {
+            return new ObjectResult("An error occurred: " + ex.Message)
+            {
+                StatusCode = 500
+            };
+        }
     }
 }
 
@@ -116,15 +156,24 @@ public class returnRecord
     public IActionResult Run(
     [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "records/{id}/return")] HttpRequest req, int id)
     {
-        ReturnRecordResponse result = RecordService.ReturnRecord(_db, id);
-
-        return result switch
+        try
         {
-            ReturnRecordResponse.Success => new OkObjectResult("Record returned successfully."),
-            ReturnRecordResponse.NotFound => new NotFoundObjectResult("Record not found."),
-            ReturnRecordResponse.NotHiredOut => new BadRequestObjectResult("This record is not currently hired out."),
-            _ => new StatusCodeResult(500)
-        };
+            ReturnRecordResponse result = RecordService.ReturnRecord(_db, id);
+            return result switch
+            {
+                ReturnRecordResponse.Success => new OkObjectResult("Record returned successfully."),
+                ReturnRecordResponse.NotFound => new NotFoundObjectResult("Record not found."),
+                ReturnRecordResponse.NotHiredOut => new BadRequestObjectResult("This record is not currently hired out."),
+                _ => new StatusCodeResult(500)
+            };
+        }
+        catch (Exception ex)
+        {
+            return new ObjectResult("An error occurred: " + ex.Message)
+            {
+                StatusCode = 500
+            };
+        }
     }
 }
 
@@ -140,8 +189,18 @@ public class DeleteRecord
     public IActionResult Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "deleteRecord/{id}")] HttpRequest req, int id)
     {
-        DeleteRecordResponse success = RecordService.DeleteRecord(_db, id);
-        if (!success.Success) return new NotFoundObjectResult("Record not found.");
-        return new OkObjectResult("Record deleted successfully.");
+        try
+        {
+            DeleteRecordResponse success = RecordService.DeleteRecord(_db, id);
+            if (!success.Success) return new NotFoundObjectResult("Record not found.");
+            return new OkObjectResult("Record deleted successfully.");
+        }
+        catch (Exception ex)
+        {
+            return new ObjectResult("An error occurred: " + ex.Message)
+            {
+                StatusCode = 500
+            };
+        }
     }
 }

@@ -76,3 +76,10 @@ spinback-records/
 - Add new records
 - Delete records (only works if they're not hired out)
 - Hover over Michael Jackson
+
+### Total Time
+- 5 Hours on the basic flow.
+
+- 2 Hours cleaning everything and making the miroboard.
+
+Was insanely fun to make : )
